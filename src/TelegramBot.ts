@@ -4,8 +4,7 @@ import LocalSession from 'telegraf-session-local';
 import { IBotContext } from './types/interface';
 import { AbstractCommand } from './commands/abstract.command';
 import { StartCommand } from './commands/start.command';
-import { BalanceRepository, OrderRepository } from './repository';
-import { SessionRepository } from 'repository/repository/session.repository';
+import { BalanceRepository, OrderRepository, ConfigRepository, SessionRepository } from './repository';
 config();
 
 export class TelegramBot {
@@ -15,7 +14,13 @@ export class TelegramBot {
     this._bot = new Telegraf<IBotContext>(process.env.TELEGRAM_BOT!);
     this._bot.use(new LocalSession({ database: 'sessions.json' }));
     this._commands = [
-      new StartCommand(this._bot, new BalanceRepository(), new OrderRepository(), new SessionRepository()),
+      new StartCommand(
+        this._bot,
+        new BalanceRepository(),
+        new OrderRepository(),
+        new SessionRepository(),
+        new ConfigRepository(),
+      ),
     ];
   }
 

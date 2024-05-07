@@ -2,7 +2,7 @@ import { config } from 'dotenv';
 import { Markup, Telegraf } from 'telegraf';
 import { IBotContext } from '../types/interface';
 import { AbstractCommand } from './abstract.command';
-import { OrderRepository, BalanceRepository, SessionRepository } from 'repository';
+import { OrderRepository, BalanceRepository, SessionRepository, ConfigRepository } from 'repository';
 config();
 
 export class StartCommand extends AbstractCommand {
@@ -11,6 +11,7 @@ export class StartCommand extends AbstractCommand {
     private balanceRepository: BalanceRepository,
     private orderRepository: OrderRepository,
     private sessionRepository: SessionRepository,
+    private configRepository: ConfigRepository,
   ) {
     super(bot);
   }
@@ -24,6 +25,7 @@ export class StartCommand extends AbstractCommand {
           Markup.button.callback('Start trade', 'startTrade'),
           Markup.button.callback('Check active session', 'checkActive'),
           Markup.button.callback('Change config', 'changeConfig'),
+          Markup.button.callback('Emergency stop', 'enableEmergency'),
         ]),
       );
     });
@@ -87,8 +89,13 @@ export class StartCommand extends AbstractCommand {
     });
 
     this.bot.action('changeConfig', async (ctx) => {
-      const allProfit = await this.sessionRepository.getAllSessionProfit();
-      await ctx.reply(`All profit: ${allProfit}`);
+      await this.configRepository.updateConfig({});
+      await ctx.reply(`Success recorded config!`);
+    });
+
+    this.bot.action('enableEmergency', async (ctx) => {
+      await this.configRepository.enableEmergencyStop();
+      await ctx.reply(`Process is stoped!`);
     });
   }
 }
