@@ -2,6 +2,7 @@ import { Pool } from 'pg';
 import {
   BalanceStateType,
   ColumnName,
+  ConfigType,
   CreateOrderParamsType,
   CreateStateBalanceParamType,
   InsertQueryParamType,
@@ -41,7 +42,7 @@ export abstract class AbstractRepository {
       `
         update ${tableName} 
           set ${this._updateValueGeneration(value)}
-          where ${this._whereGeneration({ where, operationCondition })}
+          ${() => (where ? `where ${this._whereGeneration({ where, operationCondition })}` : ``)}
         `,
     );
   }
@@ -51,12 +52,14 @@ export abstract class AbstractRepository {
       `
         select ${this._selectColumnGeneration(column)}
             from ${tableName}
-            where ${this._whereGeneration({ where, operationCondition })}
+            ${() => (where ? `where ${this._whereGeneration({ where, operationCondition })}` : ``)}
         `,
     );
   }
 
-  protected _mappingValuesList(values: BalanceStateType | CreateStateBalanceParamType | CreateOrderParamsType) {
+  protected _mappingValuesList(
+    values: BalanceStateType | CreateStateBalanceParamType | CreateOrderParamsType | Partial<ConfigType>,
+  ) {
     console.log(Object.keys(values));
     return Object.keys(values).flatMap((name) => ({
       column: ColumnName[name],
@@ -69,9 +72,12 @@ export abstract class AbstractRepository {
   }
 
   private _whereGeneration(param: WhereGenerationParamType) {
-    return param.where
-      .flatMap((condition) => `${condition.column} = ${this._syntaxStringForSql(condition.value)}`)
-      .join(` ${param.operationCondition} ` ?? '');
+    return (
+      param.where &&
+      param.where
+        .flatMap((condition) => `${condition.column} = ${this._syntaxStringForSql(condition.value)}`)
+        .join(` ${param.operationCondition} ` ?? '')
+    );
   }
 
   private _selectColumnGeneration(columns: string[]) {

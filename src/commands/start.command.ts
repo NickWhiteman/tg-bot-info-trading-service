@@ -2,7 +2,7 @@ import { config } from 'dotenv';
 import { Markup, Telegraf } from 'telegraf';
 import { IBotContext } from '../types/interface';
 import { AbstractCommand } from './abstract.command';
-import { OrderRepository, BalanceRepository } from 'repository';
+import { OrderRepository, BalanceRepository, SessionRepository } from 'repository';
 config();
 
 export class StartCommand extends AbstractCommand {
@@ -10,6 +10,7 @@ export class StartCommand extends AbstractCommand {
     bot: Telegraf<IBotContext>,
     private balanceRepository: BalanceRepository,
     private orderRepository: OrderRepository,
+    private sessionRepository: SessionRepository,
   ) {
     super(bot);
   }
@@ -21,6 +22,8 @@ export class StartCommand extends AbstractCommand {
           Markup.button.callback('Get balance', 'getBalance'),
           Markup.button.callback('All open position', 'allOpenPosition'),
           Markup.button.callback('Start trade', 'startTrade'),
+          Markup.button.callback('Check active session', 'checkActive'),
+          Markup.button.callback('Change config', 'changeConfig'),
         ]),
       );
     });
@@ -45,6 +48,7 @@ export class StartCommand extends AbstractCommand {
 
     this.bot.action('getBalance', async (ctx) => {
       const balance = await this.balanceRepository.getBalanceByApiKey(process.env.API_KEY!)!;
+      const profitSession = await this.sessionRepository.getAllSessionProfit();
       console.log('balance => ', balance);
       await ctx.reply(
         balance
@@ -54,14 +58,37 @@ export class StartCommand extends AbstractCommand {
         Profit USDT: ${balance['profitusdt']}
         All balance: ${balance.profitAll}
         Profit percent: ${balance['profitpercent']}
-        Profit session: ${balance.profitSession}`
+        Profit prev session: ${profitSession}`
           : 'Connection not found!',
       );
     });
 
     this.bot.action('startTrade', async (ctx) => {
       await fetch('http://0.0.0.0:3001/start');
-      await ctx.reply('');
+      const indexSession = await this.sessionRepository.checkingActiveSession();
+      await ctx.reply(`Trading session start! ${indexSession?.indexSession}`);
+    });
+
+    this.bot.action('allProfit', async (ctx) => {
+      const allProfit = await this.sessionRepository.getAllSessionProfit();
+      await ctx.reply(`All profit: ${allProfit}`);
+    });
+
+    this.bot.action('checkActive', async (ctx) => {
+      const session = await this.sessionRepository.checkingActiveSession();
+      await ctx.reply(
+        session
+          ? `
+      Session index: ${session?.indexSession}
+      Is active: ${session?.isActive}
+      `
+          : `Not started session!`,
+      );
+    });
+
+    this.bot.action('changeConfig', async (ctx) => {
+      const allProfit = await this.sessionRepository.getAllSessionProfit();
+      await ctx.reply(`All profit: ${allProfit}`);
     });
   }
 }

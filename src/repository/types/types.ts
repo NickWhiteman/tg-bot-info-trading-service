@@ -16,7 +16,7 @@ export type CreateOrderParamsType = Pick<OrderType, 'orderId' | 'order' | 'price
   indexOperation: string;
 };
 
-export type TableNameType = 'trade_operation' | 'balance_history';
+export type TableNameType = 'trade_operation' | 'balance_history' | 'trade_session' | 'trade_config';
 export type ValueType = {
   column: string;
   value: string | number;
@@ -26,7 +26,7 @@ type WhereType = ValueType;
 export type UpdateQueryParamType = {
   tableName: TableNameType;
   value: ValueType[];
-  where: WhereType[];
+  where?: WhereType[];
   operationCondition?: 'and' | 'or';
 };
 
@@ -57,10 +57,26 @@ export type CreateStateBalanceParamType = {
 
 export type BalanceStateType = Omit<
   CreateStateBalanceParamType,
-  'apiKey' | 'privateKey' | 'exchangeName' | 'updateDate'
+  'apiKey' | 'privateKey' | 'exchangeName' | 'profitSession' | 'updateDate'
 >;
 
+export type SessionType = {
+  indexSession: string;
+  isActive: boolean;
+};
+
+export type ConfigType = {
+  positionSize: number;
+  countGridSize: number | null;
+  gridSize: number | null;
+  percentBuyBack: number;
+  takeProfit: number | null;
+  stopLoss: number | null;
+  isEmergencyStop: boolean;
+};
+
 export enum ColumnName {
+  id = 'id',
   //balance_history
   usdt = 'usdt',
   eth = 'eth',
@@ -81,4 +97,16 @@ export enum ColumnName {
   amount = 'amount',
   side = 'side',
   indexOperation = 'index_operation',
+  createAt = 'create_at',
+  isActive = 'is_active',
+  //trade_session
+  indexSession = 'index_session',
+  //trade_config
+  positionSize = 'position_size',
+  countGridSize = 'count_grid_size',
+  gridSize = 'grid_size',
+  percentBuyBack = 'percent_buy_back',
+  takeProfit = 'take_profit',
+  stopLoss = 'stop_loss',
+  isEmergencyStop = 'is_emergency_stop',
 }
