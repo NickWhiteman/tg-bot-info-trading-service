@@ -14,26 +14,27 @@ export class StartCommand extends AbstractCommand {
     super(bot);
   }
   async handle(): Promise<void> {
-    this.bot.start((ctx) => {
-      ctx.reply(
+    this.bot.start(async (ctx) => {
+      await ctx.reply(
         'AlgoBot Interface',
         Markup.inlineKeyboard([
           Markup.button.callback('Get balance', 'getBalance'),
-          Markup.button.callback('All open position', 'allOpenPostion'),
+          Markup.button.callback('All open position', 'allOpenPosition'),
+          Markup.button.callback('Start trade', 'startTrade'),
         ]),
       );
     });
 
-    this.bot.action('allOpenPostion', async (ctx) => {
+    this.bot.action('allOpenPosition', async (ctx) => {
       const orders = await this.orderRepository.getAllActiveOrders();
 
-      if (orders === undefined) {
-        ctx.reply('Connection not found!');
+      if (orders?.length || orders === undefined) {
+        ctx.reply('Not open orders!');
         return;
       }
 
       for (const order of orders) {
-        ctx.reply(`Order ${order.orderId}
+        await ctx.reply(`Order ${order.orderId}
               Amount: ${order.amount}
               Price: ${order.price}
               Side: ${order.side}
@@ -45,7 +46,7 @@ export class StartCommand extends AbstractCommand {
     this.bot.action('getBalance', async (ctx) => {
       const balance = await this.balanceRepository.getBalanceByApiKey(process.env.API_KEY!)!;
       console.log('balance => ', balance);
-      ctx.reply(
+      await ctx.reply(
         balance
           ? ` ETH: ${balance?.eth}
         USDT: ${balance?.usdt}
@@ -56,6 +57,11 @@ export class StartCommand extends AbstractCommand {
         Profit session: ${balance.profitSession}`
           : 'Connection not found!',
       );
+    });
+
+    this.bot.action('startTrade', async (ctx) => {
+      await fetch('http://0.0.0.0:3001/start');
+      await ctx.reply('');
     });
   }
 }

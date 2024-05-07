@@ -3,5 +3,6 @@ WORKDIR /app
 COPY . .
 RUN npm install
 RUN npm install -g forever
+RUN npm run build
 EXPOSE 5000
-CMD ["forever", "start", "build/index.js"]
+CMD ["npm", "run", "start"]
