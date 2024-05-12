@@ -10,9 +10,9 @@ export class SessionRepository extends AbstractRepository {
   }
 
   async getAllSessionProfit(): Promise<number | undefined> {
-    const profit = await this._selectQuery<{ profitSession: number }>({
+    const profit = await this._selectQuery<{ sum: number }>({
       tableName: this.tableName,
-      column: ['profit_session'],
+      column: ['sum(profit_session) as sum'],
       where: [{ column: 'is_active', value: 0 }],
     });
 
@@ -20,7 +20,7 @@ export class SessionRepository extends AbstractRepository {
       return;
     }
 
-    return profit.reduce((acc, current) => acc + current.profitSession, 0);
+    return profit[0].sum;
   }
 
   async checkingActiveSession(): Promise<SessionType | undefined> {

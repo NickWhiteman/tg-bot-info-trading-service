@@ -1,5 +1,5 @@
-import { AbstractRepository } from 'repository/abstract.repository';
-import { ConfigType, TableNameType } from 'repository/types/types';
+import { AbstractRepository } from '../abstract.repository';
+import { ConfigType, TableNameType } from '../types/types';
 
 export class ConfigRepository extends AbstractRepository {
   private tableName: TableNameType = 'trade_config';
@@ -7,36 +7,54 @@ export class ConfigRepository extends AbstractRepository {
     super();
   }
 
-  async getConfig(): Promise<ConfigType> {
-    const result: ConfigType = await this._selectQuery<ConfigType>({
+  async getConfig(): Promise<ConfigType[]> {
+    const result = await this._selectQuery<ConfigType>({
       tableName: this.tableName,
       column: [
         'position_size as "positionSize"',
         'count_grid_size as "countGridSize"',
         'grid_size as "gridSize"',
-        'percent_buy_back as "percentBuyBack"',
+        'percent_buy_back as "percentBuyBackStep"',
         'take_profit as "takeProfit"',
         'stop_loss as "stopLoss"',
         'is_emergency_stop as "isEmergencyStop"',
+        'percent_profit as "percentProfit"',
+        'percent_from_balance as "percentFromBalance"',
+        'candle_price_range as "candlePriceRange"',
       ],
-    })[0];
+    });
 
-    return result;
+    if (!result) {
+      throw new Error('Config not found - you need create config in database!');
+    }
+
+    return result ?? ({} as ConfigType);
   }
 
   async getEmergencyStop(): Promise<{ isEmergencyStop: boolean }> {
     const result = await this._selectQuery<{ isEmergencyStop: boolean }>({
       tableName: this.tableName,
-      column: ['is_emergency_stop'],
-    })[0];
+      column: ['is_emergency_stop as "isEmergencyStop"'],
+    });
 
-    return result;
+    if (!result) {
+      throw new Error('Config is not found!');
+    }
+
+    return result[0];
   }
 
   async enableEmergencyStop(): Promise<void> {
     await this._updateQuery({
       tableName: this.tableName,
       value: [{ column: 'is_emergency_stop', value: 1 }],
+    });
+  }
+
+  async disableEmergencyStop(): Promise<void> {
+    await this._updateQuery({
+      tableName: this.tableName,
+      value: [{ column: 'is_emergency_stop', value: 0 }],
     });
   }
 

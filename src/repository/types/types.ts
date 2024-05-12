@@ -44,10 +44,10 @@ export type ValueGenerationParamType = ValueType;
 export type CreateStateBalanceParamType = {
   usdt: number;
   eth: number;
-  profitSession: number;
+  btc: number;
   profitAll: number;
   exchangeName: string;
-  updateDate?: number;
+  updateDate?: string;
   profitEth: number;
   profitUsdt: number;
   profitPercent: number;
@@ -73,6 +73,9 @@ export type ConfigType = {
   takeProfit: number | null;
   stopLoss: number | null;
   isEmergencyStop: boolean;
+  percentPorfit: number;
+  percentFromBalance: number;
+  candlePriceRange: string;
 };
 
 export enum ColumnName {
@@ -80,7 +83,7 @@ export enum ColumnName {
   //balance_history
   usdt = 'usdt',
   eth = 'eth',
-  profitSession = 'profit_session',
+  btc = 'btc',
   profitAll = 'profit_all',
   exchangeName = 'exchange_name',
   updateDate = 'update_date',
@@ -101,6 +104,7 @@ export enum ColumnName {
   isActive = 'is_active',
   //trade_session
   indexSession = 'index_session',
+  profitSession = 'profit_session',
   //trade_config
   positionSize = 'position_size',
   countGridSize = 'count_grid_size',
@@ -109,4 +113,7 @@ export enum ColumnName {
   takeProfit = 'take_profit',
   stopLoss = 'stop_loss',
   isEmergencyStop = 'is_emergency_stop',
+  percentProfit = 'percent_profit',
+  percentFromBalance = 'percent_from_balance',
+  candlePriceRange = 'candle_price_range',
 }

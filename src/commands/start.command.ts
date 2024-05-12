@@ -19,7 +19,7 @@ export class StartCommand extends AbstractCommand {
     this.bot.start(async (ctx) => {
       await ctx.reply(
         'AlgoBot Interface',
-        Markup.inlineKeyboard([
+        Markup.keyboard([
           Markup.button.callback('Get balance', 'getBalance'),
           Markup.button.callback('All open position', 'allOpenPosition'),
           Markup.button.callback('Start trade', 'startTrade'),
@@ -31,6 +31,7 @@ export class StartCommand extends AbstractCommand {
     });
 
     this.bot.action('allOpenPosition', async (ctx) => {
+      console.log(`responce => allOpenPosition`);
       const orders = await this.orderRepository.getAllActiveOrders();
 
       if (orders?.length || orders === undefined) {
@@ -68,33 +69,48 @@ export class StartCommand extends AbstractCommand {
     this.bot.action('startTrade', async (ctx) => {
       await fetch('http://0.0.0.0:3001/start');
       const indexSession = await this.sessionRepository.checkingActiveSession();
+      console.log(`responce => startTrade`);
       await ctx.reply(`Trading session start! ${indexSession?.indexSession}`);
     });
 
     this.bot.action('allProfit', async (ctx) => {
+      console.log(`responce => allProfit`);
+
       const allProfit = await this.sessionRepository.getAllSessionProfit();
       await ctx.reply(`All profit: ${allProfit}`);
     });
 
     this.bot.action('checkActive', async (ctx) => {
       const session = await this.sessionRepository.checkingActiveSession();
+      console.log(`responce => checkActive`);
       await ctx.reply(
-        session
-          ? `
-      Session index: ${session?.indexSession}
-      Is active: ${session?.isActive}
-      `
-          : `Not started session!`,
+        session ? `Session index: ${session?.indexSession}, Is active: ${session?.isActive}` : `Not started session!`,
       );
     });
 
     this.bot.action('changeConfig', async (ctx) => {
-      await this.configRepository.updateConfig({});
+      // const message = ctx.message;
+      // await this.configRepository.updateConfig({
+      //   ...(message as {
+      //     positionSize: number;
+      //     countGridSize: number;
+      //     gridSize: number;
+      //     percentBuyBack: number;
+      //     takeProfit: number;
+      //     stopLoss: number;
+      //     isEmergencyStop: boolean;
+      //     percentPorfit: number;
+      //     percentFromBalance: number;
+      //     candlePriceRange: string;
+      //   }),
+      // });
+      console.log(`responce => changeConfig`);
       await ctx.reply(`Success recorded config!`);
     });
 
     this.bot.action('enableEmergency', async (ctx) => {
       await this.configRepository.enableEmergencyStop();
+      console.log(`responce => enableEmergency`);
       await ctx.reply(`Process is stoped!`);
     });
   }

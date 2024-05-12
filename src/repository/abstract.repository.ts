@@ -38,21 +38,25 @@ export abstract class AbstractRepository {
   }
 
   protected async _updateQuery({ tableName, value, where, operationCondition }: UpdateQueryParamType) {
+    const whereString = this._whereChecker({ where, operationCondition });
+
     await this._query(
       `
         update ${tableName} 
           set ${this._updateValueGeneration(value)}
-          ${() => (where ? `where ${this._whereGeneration({ where, operationCondition })}` : ``)}
+          ${whereString}
         `,
     );
   }
 
   protected async _selectQuery<T>({ tableName, column, where, operationCondition }: SelectQueryParamType) {
+    const whereString = this._whereChecker({ where, operationCondition });
+
     return await this._query<T>(
       `
         select ${this._selectColumnGeneration(column)}
             from ${tableName}
-            ${() => (where ? `where ${this._whereGeneration({ where, operationCondition })}` : ``)}
+            ${whereString}
         `,
     );
   }
@@ -78,6 +82,10 @@ export abstract class AbstractRepository {
         .flatMap((condition) => `${condition.column} = ${this._syntaxStringForSql(condition.value)}`)
         .join(` ${param.operationCondition} ` ?? '')
     );
+  }
+
+  private _whereChecker({ where, operationCondition }) {
+    return where ? `where ${this._whereGeneration({ where, operationCondition })}` : ``;
   }
 
   private _selectColumnGeneration(columns: string[]) {

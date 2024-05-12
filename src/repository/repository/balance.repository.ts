@@ -28,7 +28,7 @@ export class BalanceRepository extends AbstractRepository {
       column: [
         'usdt',
         'eth',
-        'profit_session as "profitSession"',
+        'btc',
         'profit_all as "profitAll"',
         'exchange_name as "exchangeName"',
         'update_date as "updateDate"',
