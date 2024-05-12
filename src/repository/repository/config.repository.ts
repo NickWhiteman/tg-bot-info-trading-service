@@ -51,13 +51,6 @@ export class ConfigRepository extends AbstractRepository {
     });
   }
 
-  async disableEmergencyStop(): Promise<void> {
-    await this._updateQuery({
-      tableName: this.tableName,
-      value: [{ column: 'is_emergency_stop', value: 0 }],
-    });
-  }
-
   async updateConfig(config: Partial<ConfigType>) {
     await this._updateQuery({
       tableName: this.tableName,

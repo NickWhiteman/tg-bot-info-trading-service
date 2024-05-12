@@ -47,7 +47,6 @@ export type CreateStateBalanceParamType = {
   btc: number;
   profitAll: number;
   exchangeName: string;
-  updateDate?: string;
   profitEth: number;
   profitUsdt: number;
   profitPercent: number;
@@ -69,7 +68,7 @@ export type ConfigType = {
   positionSize: number;
   countGridSize: number | null;
   gridSize: number | null;
-  percentBuyBack: number;
+  percentBuyBackStep: number;
   takeProfit: number | null;
   stopLoss: number | null;
   isEmergencyStop: boolean;

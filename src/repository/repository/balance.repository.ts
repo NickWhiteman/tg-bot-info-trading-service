@@ -31,7 +31,6 @@ export class BalanceRepository extends AbstractRepository {
         'btc',
         'profit_all as "profitAll"',
         'exchange_name as "exchangeName"',
-        'update_date as "updateDate"',
         'profit_eth as profitEth',
         'profit_usdt as profitUsdt',
         'profit_percent as profitPercent',
@@ -40,22 +39,5 @@ export class BalanceRepository extends AbstractRepository {
     });
 
     return (result && result[0]) ?? undefined;
-  }
-
-  async updateBalance(apiKey: string, balance: BalanceStateType) {
-    console.log('ПРОВЕРКА =>', this._mappingValuesList(balance));
-    await this._updateQuery({
-      tableName: this._tableName,
-      value: this._mappingValuesList(balance),
-      where: [{ column: 'api_key', value: apiKey }],
-    });
-  }
-
-  async updateProfitSession(apiKey: string, profitSession: number) {
-    this._updateQuery({
-      tableName: this._tableName,
-      value: [{ column: 'profit_session', value: profitSession }],
-      where: [{ column: 'api_key', value: apiKey }],
-    });
   }
 }
