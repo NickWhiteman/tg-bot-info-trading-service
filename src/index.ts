@@ -1,5 +1,8 @@
 import { TelegramBot } from './TelegramBot';
-
-const bot = new TelegramBot();
-bot.init();
-console.log('Bot started!');
+try {
+  const bot = new TelegramBot();
+  bot.init();
+  console.log('Bot started!');
+} catch (error) {
+  console.error(error);
+}

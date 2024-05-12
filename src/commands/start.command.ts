@@ -2,66 +2,45 @@ import { config } from 'dotenv';
 import { Markup, Telegraf } from 'telegraf';
 import { IBotContext } from '../types/interface';
 import { AbstractCommand } from './abstract.command';
-import { OrderRepository, BalanceRepository } from 'repository';
+import { OrderRepository, BalanceRepository, SessionRepository, ConfigRepository } from 'repository';
 config();
 
 export class StartCommand extends AbstractCommand {
-  constructor(
-    bot: Telegraf<IBotContext>,
-    private balanceRepository: BalanceRepository,
-    private orderRepository: OrderRepository,
-  ) {
+  constructor(bot: Telegraf<IBotContext>) {
     super(bot);
   }
   async handle(): Promise<void> {
-    this.bot.start(async (ctx) => {
+    this.bot.action('/statistic', async (ctx) => {
       await ctx.reply(
-        'AlgoBot Interface',
+        '𝗦𝗧𝗔𝗧𝗜𝗦𝗧𝗜𝗖 𝗜𝗻𝘁𝗲𝗿𝗳𝗮𝗰𝗲',
         Markup.inlineKeyboard([
           Markup.button.callback('Get balance', 'getBalance'),
           Markup.button.callback('All open position', 'allOpenPosition'),
-          Markup.button.callback('Start trade', 'startTrade'),
+          Markup.button.callback('Check active session', 'checkActive'),
+          Markup.button.callback('Check all profit', 'allProfit'),
         ]),
       );
     });
 
-    this.bot.action('allOpenPosition', async (ctx) => {
-      const orders = await this.orderRepository.getAllActiveOrders();
-
-      if (orders?.length || orders === undefined) {
-        ctx.reply('Not open orders!');
-        return;
-      }
-
-      for (const order of orders) {
-        await ctx.reply(`Order ${order.orderId}
-              Amount: ${order.amount}
-              Price: ${order.price}
-              Side: ${order.side}
-              Symbol: ${order.symbol}
-            `);
-      }
-    });
-
-    this.bot.action('getBalance', async (ctx) => {
-      const balance = await this.balanceRepository.getBalanceByApiKey(process.env.API_KEY!)!;
-      console.log('balance => ', balance);
+    this.bot.action('/setting', async (ctx) => {
       await ctx.reply(
-        balance
-          ? ` ETH: ${balance?.eth}
-        USDT: ${balance?.usdt}
-        Profit ETH: ${balance['profiteth']}
-        Profit USDT: ${balance['profitusdt']}
-        All balance: ${balance.profitAll}
-        Profit percent: ${balance['profitpercent']}
-        Profit session: ${balance.profitSession}`
-          : 'Connection not found!',
+        '𝗦𝗘𝗧𝗧𝗜𝗡𝗚 𝗜𝗻𝘁𝗲𝗿𝗳𝗮𝗰𝗲',
+        Markup.inlineKeyboard([
+          Markup.button.callback('Start trade', 'startTrade'),
+          Markup.button.callback('Change config', 'changeConfig'),
+          Markup.button.callback('Emergency stop', 'enableEmergency'),
+        ]),
       );
     });
 
-    this.bot.action('startTrade', async (ctx) => {
-      await fetch('http://0.0.0.0:3001/start');
-      await ctx.reply('');
+    this.bot.start(async (ctx) => {
+      await ctx.reply(
+        '𝗔𝗟𝗚𝗢𝗕𝗢𝗧 𝗜𝗻𝘁𝗲𝗿𝗳𝗮𝗰𝗲',
+        Markup.inlineKeyboard([
+          Markup.button.callback('Statistic', '/statistic'),
+          Markup.button.callback('Setting', '/setting'),
+        ]),
+      );
     });
   }
 }

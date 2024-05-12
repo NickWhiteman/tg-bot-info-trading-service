@@ -6,6 +6,7 @@
   "scripts": {
     "build": "rimraf build && npx tsc",
     "start": "forever start --minUptime 5000 --spinSleepTime 2000 build/index.js",
+    "start:node": "node build/index.js",
     "stop": "forever stop build/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
