@@ -108,7 +108,7 @@ export enum ColumnName {
   positionSize = 'position_size',
   countGridSize = 'count_grid_size',
   gridSize = 'grid_size',
-  percentBuyBack = 'percent_buy_back',
+  percentBuyBackStep = 'percent_buy_back',
   takeProfit = 'take_profit',
   stopLoss = 'stop_loss',
   isEmergencyStop = 'is_emergency_stop',
