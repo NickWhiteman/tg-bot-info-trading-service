@@ -65,6 +65,10 @@ export type SessionType = {
 };
 
 export type ConfigType = {
+  apiKey: string;
+  privateKey: string;
+  password: string;
+  symbol: string;
   positionSize: number;
   countGridSize: number | null;
   gridSize: number | null;
@@ -72,9 +76,13 @@ export type ConfigType = {
   takeProfit: number | null;
   stopLoss: number | null;
   isEmergencyStop: boolean;
-  percentPorfit: number;
+  percentProfit: number;
   percentFromBalance: number;
   candlePriceRange: string;
+  isPercentTargetAfterTakeProfit: boolean;
+  percentTargetAfterTakeProfit: number;
+  balanceDistribution: boolean;
+  exchange: 'okx';
 };
 
 export enum ColumnName {

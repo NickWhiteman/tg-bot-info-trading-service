@@ -2,7 +2,6 @@ import { config } from 'dotenv';
 import { Markup, Telegraf } from 'telegraf';
 import { IBotContext } from '../types/interface';
 import { AbstractCommand } from './abstract.command';
-import { OrderRepository, BalanceRepository, SessionRepository, ConfigRepository } from 'repository';
 config();
 
 export class StartCommand extends AbstractCommand {
@@ -26,7 +25,6 @@ export class StartCommand extends AbstractCommand {
       await ctx.reply(
         '𝗦𝗘𝗧𝗧𝗜𝗡𝗚 𝗜𝗻𝘁𝗲𝗿𝗳𝗮𝗰𝗲',
         Markup.inlineKeyboard([
-          Markup.button.callback('Start trade', 'startTrade'),
           Markup.button.callback('Change config', 'changeConfig'),
           Markup.button.callback('Emergency stop', 'enableEmergency'),
         ]),

@@ -1,4 +1,4 @@
-import { BalanceStateType, CreateStateBalanceParamType, TableNameType } from 'repository/types/types';
+import { BalanceStateType, TableNameType } from 'repository/types/types';
 import { AbstractRepository } from '../abstract.repository';
 
 export class BalanceRepository extends AbstractRepository {
@@ -7,35 +7,17 @@ export class BalanceRepository extends AbstractRepository {
     super();
   }
 
-  async createStateBalance(balanceState: CreateStateBalanceParamType) {
-    try {
-      await this._insertQuery({
-        tableName: this._tableName,
-        value: this._mappingValuesList(balanceState),
-      });
-
-      return {
-        message: 'Balance success was be created!',
-      };
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
-  async getBalanceByApiKey(apiKey: string) {
+  async getBalanceByApiKey() {
     const result = await this._selectQuery<BalanceStateType>({
       tableName: this._tableName,
       column: [
         'usdt',
-        'eth',
-        'btc',
         'profit_all as "profitAll"',
         'exchange_name as "exchangeName"',
-        'profit_eth as profitEth',
         'profit_usdt as profitUsdt',
         'profit_percent as profitPercent',
+        'balance_object as "balanceObject"',
       ],
-      where: [{ column: 'api_key', value: apiKey }],
     });
 
     return (result && result[0]) ?? undefined;

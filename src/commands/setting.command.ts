@@ -15,13 +15,6 @@ export class SettingCommand extends AbstractCommand {
     super(bot);
   }
   async handle(): Promise<void> {
-    this.bot.action('startTrade', async (ctx) => {
-      await fetch('http://0.0.0.0:3001/start');
-      const indexSession = await this.sessionRepository.checkingActiveSession();
-      console.log(`responce => startTrade`);
-      await ctx.reply(`Trading session start! ${indexSession?.indexSession}`);
-    });
-
     this.bot.action('enableEmergency', async (ctx) => {
       await this.configRepository.enableEmergencyStop();
       console.log(`responce => enableEmergency`);

@@ -2,7 +2,7 @@ import { config } from 'dotenv';
 import { Markup, Telegraf } from 'telegraf';
 import { IBotContext } from '../types/interface';
 import { AbstractCommand } from './abstract.command';
-import { OrderRepository, BalanceRepository, SessionRepository, ConfigRepository } from 'repository';
+import { OrderRepository, BalanceRepository, SessionRepository } from 'repository';
 config();
 
 export class StatisticCommand extends AbstractCommand {
@@ -36,15 +36,14 @@ export class StatisticCommand extends AbstractCommand {
 
     this.bot.action('getBalance', async (ctx) => {
       console.log('balance => ', 'this work');
-      const balance = await this.balanceRepository.getBalanceByApiKey(process.env.API_KEY!)!;
+      const balance = await this.balanceRepository.getBalanceByApiKey()!;
       const profitSession = await this.sessionRepository.getAllSessionProfit();
 
       console.log('balance => ', balance);
       ctx.reply(
         balance
-          ? ` ETH: ${balance?.eth}
+          ? `
         USDT: ${balance?.usdt}
-        Profit ETH: ${balance['profiteth']}
         Profit USDT: ${balance['profitusdt']}
         All profit: ${profitSession}
         Profit percent: ${balance['profitpercent']}`

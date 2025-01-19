@@ -21,6 +21,11 @@ export class ConfigRepository extends AbstractRepository {
         'percent_profit as "percentProfit"',
         'percent_from_balance as "percentFromBalance"',
         'candle_price_range as "candlePriceRange"',
+        'api_key as "apiKey"',
+        'private_key as "privateKey"',
+        'password',
+        'exchange',
+        'symbol',
       ],
     });
 
